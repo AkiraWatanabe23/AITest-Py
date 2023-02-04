@@ -10,7 +10,7 @@ class GameController(TwoPlayerGame):
         self.board = [0] * 9
 
     def possible_moves(self):
-        '''指すことができるマスの列挙'''
+        '''指すことができるマスの列挙(return list[int])'''
         return [a + 1 for a, b in enumerate(self.board) if b == 0]
 
     def make_move(self, move):
@@ -18,14 +18,14 @@ class GameController(TwoPlayerGame):
         self.board[int(move) - 1] = self.n_player
 
     def loss_game(self):
-        '''負け判定'''
+        '''負け判定(return bool)'''
         win_comb = [[1, 2, 3], [4, 5, 6], [7, 8, 9],
                     [1, 4, 7], [2, 5, 8], [3, 6, 9],
                     [1, 5, 9], [3, 5, 7]]
         return any([all([(self.board[i-1] == self.opponent) for i in comb]) for comb in win_comb])
 
     def is_over(self):
-        '''ゲームの終了判定'''
+        '''ゲームの終了判定(return bool)'''
         return (self.possible_moves() == []) or self.loss_game()
 
     def show(self):
