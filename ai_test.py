@@ -1,11 +1,12 @@
 '''「easyAI」使ってみる'''
-from easyAI import TwoPlayerGame, Human_Player, AI_Player, Negamax
+from easyAI import TwoPlayerGame, AI_Player, Negamax
+from easyAI.Player import Human_Player
 
 class GameController(TwoPlayerGame):
     '''ゲーム全体の管理'''
     def __init__(self, players):
         self.players = players
-        self.n_player = 2
+        self.nplayer = 1
         self.current_player = 1
         self.board = [0] * 9
 
@@ -15,7 +16,7 @@ class GameController(TwoPlayerGame):
 
     def make_move(self, move):
         '''盤面を更新する'''
-        self.board[int(move) - 1] = self.n_player
+        self.board[int(move) - 1] = self.nplayer
 
     def loss_game(self):
         '''負け判定(return bool)'''
