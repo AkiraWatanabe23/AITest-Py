@@ -38,6 +38,5 @@ class GameController(TwoPlayerGame):
         return -100 if self.loss_game() else 0
 
 algorithm = Negamax(7)
-#↓この部分でエラー出てる
 game = GameController([Human_Player(), AI_Player(algorithm)])
 game.play()
