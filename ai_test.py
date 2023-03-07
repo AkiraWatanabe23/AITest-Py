@@ -23,7 +23,7 @@ class GameController(TwoPlayerGame):
         win_comb = [[1, 2, 3], [4, 5, 6], [7, 8, 9],
                     [1, 4, 7], [2, 5, 8], [3, 6, 9],
                     [1, 5, 9], [3, 5, 7]]
-        return any([all([(self.board[i-1] == self.opponent) for i in comb]) for comb in win_comb])
+        return any([all([(self.board[i - 1] == self.opponent) for i in comb]) for comb in win_comb])
 
     def is_over(self):
         '''ゲームの終了判定(return bool)'''
