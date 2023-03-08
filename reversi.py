@@ -3,8 +3,8 @@ import numpy as np
 
 #マスの状態
 EMPTY = 0
-WHITE = 1
-BLACK = -1
+WHITE = -1
+BLACK = 1
 WALL = 2
 BOARD_SIZE = 8
 
@@ -40,7 +40,7 @@ class Board():
         self.board[5, 4] = BLACK
 
         self.turn = 0
-        self.current_turn = WHITE
+        self.current_color = BLACK
 
         self.movable_pos = np.zeros((BOARD_SIZE + 2, BOARD_SIZE + 2), dtype=int)
         self.movable_dir = np.zeros((BOARD_SIZE + 2, BOARD_SIZE + 2), dtype=int)
@@ -54,7 +54,7 @@ class Board():
         for x in range(1, BOARD_SIZE + 1):
             for y in range(1, BOARD_SIZE + 1):
                 #各マスに石が置けるかの判定を行い、反映する
-                move_dir = self.movable_check(x, y, self.current_turn)
+                move_dir = self.movable_check(x, y, self.current_color)
                 self.movable_dir[x, y] = move_dir
 
                 #各マスの値が0でない(石が置ける)なら、Trueにする
@@ -81,9 +81,9 @@ class Board():
                 x_check -= 1
 
             if self.board[x_check, y_check] == color:
-                #ビット論理和
-                #ex.) 0010 | 1000 -> 1010
                 move_dir = move_dir | LEFT
+                #↑ビット論理和
+                #ex.) 0010 | 1000 -> 1010
 
         #左上
         if self.board[x_pos - 1, y_pos - 1] == -color:
@@ -176,16 +176,106 @@ class Board():
         if y_pos < 1 or BOARD_SIZE < y_pos:
             return False
 
+        #盤面に反映
         self.flip_stone(x_pos, y_pos)
-        self.current_turn *= -1
+        #手番を進め、交代する
+        self.turn += 1
+        self.current_color = -self.current_color
+        #探索Listをリセットし、再探索する
+        self.init_movables()
 
         return True
 
     def flip_stone(self, x_pos, y_pos):
-        '''盤面の反映'''
-        self.board[x_pos, y_pos] = self.current_turn
+        '''石を置き、盤面に反映する'''
+        #指定したマスをそのターンの色にする
+        self.board[x_pos, y_pos] = self.current_color
+
+        #指定したマスを格納
+        set_dir = self.movable_dir[x_pos, y_pos]
+
+        #石を裏返す処理
+        #左(方向にひっくり返せるなら)
+        if set_dir & LEFT:
+            #↑ビット論理積
+            #ex.) 1010 | 1000 -> 1000
+            x_check = x_pos - 1
+
+            while self.board[x_check, y_pos] == -self.current_color:
+                #相手の石のマスを自分の色に変える
+                self.board[x_check, y_pos] = self.current_color
+                #探索先のマスを更新する
+                x_check -= 1
+
+        #左上
+        if set_dir & UPPER_LEFT:
+            x_check = x_pos - 1
+            y_check = y_pos - 1
+
+            while self.board[x_check, y_check] == -self.current_color:
+                self.board[x_check, y_check] = self.current_color
+                x_check -= 1
+                y_check -= 1
+
+        #上
+        if set_dir & UPPER:
+            y_check = y_pos - 1
+
+            while self.board[x_pos, y_check] == -self.current_color:
+                self.board[x_pos, y_check] = self.current_color
+                y_check -= 1
+
+        #右上
+        if set_dir & UPPER_RIGHT:
+            x_check = x_pos + 1
+            y_check = y_pos - 1
+
+            while self.board[x_check, y_check] == -self.current_color:
+                self.board[x_check, y_check] = self.current_color
+                x_check += 1
+                y_check -= 1
+
+        #右
+        if set_dir & RIGHT:
+            x_check = x_pos + 1
+
+            while self.board[x_check, y_pos] == -self.current_color:
+                self.board[x_check, y_pos] = self.current_color
+                x_check += 1
+
+        #右下
+        if set_dir & LOWER_RIGHT:
+            x_check = x_pos + 1
+            y_check = y_pos + 1
+
+            while self.board[x_check, y_check] == -self.current_color:
+                self.board[x_check, y_check] = self.current_color
+                x_check += 1
+                y_check += 1
+
+        #下
+        if set_dir & LOWER:
+            y_check = y_pos + 1
+
+            while self.board[x_pos, y_check] == -self.current_color:
+                self.board[x_pos, y_check] = self.current_color
+                y_check += 1
+
+        #左下
+        if set_dir & LOWER_LEFT:
+            x_check = x_pos - 1
+            y_check = y_pos + 1
+
+            while self.board[x_check, y_check] == -self.current_color:
+                self.board[x_check, y_check] = self.current_color
+                x_check -= 1
+                y_check += 1
 
 instance = Board()
+
+x, y = map(int, input().split())
+if not instance.set_stone(x, y):
+    print("そこには置けない")
 
 #以下テスト表示
 print('StartState')
