@@ -187,8 +187,24 @@ class Board():
 
 instance = Board()
 
+#以下テスト表示
+print('StartState')
 for y in range(10):
     for x in range(10):
         #「^」中央揃えのformat指定子
         print('{:^3}'.format(instance.board[x, y]), end="")
+    print()
+
+print('1 is movable pos')
+for y in range(10):
+    for x in range(10):
+        #「^」中央揃えのformat指定子
+        print('{:^3}'.format(instance.movable_pos[x, y]), end="")
+    print()
+
+print('movable dir')
+for y in range(10):
+    for x in range(10):
+        #「^」中央揃えのformat指定子
+        print('{:^3}'.format(instance.movable_dir[x, y]), end="")
     print()
