@@ -271,30 +271,48 @@ class Board():
                 x_check -= 1
                 y_check += 1
 
+    def display(self):
+        '''盤面の表示'''
+        #横軸
+        print(' a b c d e f g h')
+        #縦軸
+        for y in range(1, 9):
+            print(y, end="")
+            for x in range(1, 9):
+                grid = self.board[x, y]
+
+                if grid == EMPTY:
+                    print('🔳', end='')
+                elif grid == WHITE:
+                    print('白', end='')
+                elif grid == BLACK:
+                    print('黒', end='')
+
+            print()
+
 instance = Board()
 
-x, y = map(int, input().split())
-if not instance.set_stone(x, y):
-    print("そこには置けない")
+# if not instance.set_stone(4, 3):
+#     print("そこには置けない")
 
-#以下テスト表示
-print('StartState')
-for y in range(10):
-    for x in range(10):
-        #「^」中央揃えのformat指定子
-        print('{:^3}'.format(instance.board[x, y]), end="")
-    print()
+instance.display()
 
-print('1 is movable pos')
-for y in range(10):
-    for x in range(10):
-        #「^」中央揃えのformat指定子
-        print('{:^3}'.format(instance.movable_pos[x, y]), end="")
-    print()
+# #以下テスト表示
+# print('StartState')
+# for y in range(10):
+#     for x in range(10):
+#         #「^」中央揃えのformat指定子
+#         print('{:^3}'.format(instance.board[x, y]), end="")
+#     print()
 
-print('movable dir')
-for y in range(10):
-    for x in range(10):
-        #「^」中央揃えのformat指定子
-        print('{:^3}'.format(instance.movable_dir[x, y]), end="")
-    print()
+# print('1 is movable pos')
+# for y in range(10):
+#     for x in range(10):
+#         print('{:^3}'.format(instance.movable_pos[x, y]), end="")
+#     print()
+
+# print('movable dir')
+# for y in range(10):
+#     for x in range(10):
+#         print('{:^3}'.format(instance.movable_dir[x, y]), end="")
+#     print()
