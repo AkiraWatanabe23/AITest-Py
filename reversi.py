@@ -20,6 +20,10 @@ LOWER_RIGHT = 32
 LOWER = 64
 LOWER_LEFT = 128
 
+#入力の表現
+INPUT_ALPHABET = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+INPUT_NUMBER = ['1', '2', '3', '4', '5', '6', '7', '8']
+
 class Board():
     '''盤面の設定'''
     def __init__(self):
@@ -175,6 +179,8 @@ class Board():
             return False
         if y_pos < 1 or BOARD_SIZE < y_pos:
             return False
+        if self.movable_pos[x_pos, y_pos] == 0:
+            return False
 
         #盤面に反映
         self.flip_stone(x_pos, y_pos)
@@ -275,8 +281,9 @@ class Board():
         '''盤面の表示'''
         #横軸
         print(' a b c d e f g h')
-        #縦軸
+
         for y in range(1, 9):
+            #縦軸
             print(y, end="")
             for x in range(1, 9):
                 grid = self.board[x, y]
@@ -290,29 +297,30 @@ class Board():
 
             print()
 
-instance = Board()
+    def check_correct(self, get) -> bool:
+        '''入力された手が正しい手かどうか判定する'''
+        if not get:
+            return False
 
-# if not instance.set_stone(4, 3):
-#     print("そこには置けない")
+        if get[0] in INPUT_ALPHABET and get[1] in INPUT_NUMBER:
+            return True
+
+        return False
+
+#メイン処理
+instance = Board()
 
 instance.display()
 
-# #以下テスト表示
-# print('StartState')
-# for y in range(10):
-#     for x in range(10):
-#         #「^」中央揃えのformat指定子
-#         print('{:^3}'.format(instance.board[x, y]), end="")
-#     print()
+get = input('手を入力してください')
 
-# print('1 is movable pos')
-# for y in range(10):
-#     for x in range(10):
-#         print('{:^3}'.format(instance.movable_pos[x, y]), end="")
-#     print()
+if instance.check_correct(get):
+    x = INPUT_ALPHABET.index(get[0]) + 1
+    y = INPUT_NUMBER.index(get[1]) + 1
+else:
+    print('正しい形式(ex. f5)で入力してください')
 
-# print('movable dir')
-# for y in range(10):
-#     for x in range(10):
-#         print('{:^3}'.format(instance.movable_dir[x, y]), end="")
-#     print()
+if not instance.set_stone(x, y):
+    print("そこには置けない")
+
+instance.display()
