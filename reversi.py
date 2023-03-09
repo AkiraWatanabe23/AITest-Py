@@ -297,12 +297,12 @@ class Board():
 
             print()
 
-    def check_correct(self, get) -> bool:
+    def check_correct(self, select_pos) -> bool:
         '''入力された手が正しい手かどうか判定する'''
-        if not get:
+        if not select_pos:
             return False
 
-        if get[0] in INPUT_ALPHABET and get[1] in INPUT_NUMBER:
+        if select_pos[0] in INPUT_ALPHABET and select_pos[1] in INPUT_NUMBER:
             return True
 
         return False
