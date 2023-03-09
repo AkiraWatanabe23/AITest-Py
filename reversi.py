@@ -23,6 +23,8 @@ LOWER_LEFT = 128
 #入力の表現
 INPUT_ALPHABET = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 INPUT_NUMBER = ['1', '2', '3', '4', '5', '6', '7', '8']
+#手数の上限
+MAX_TURNS = 60
 
 class Board():
     '''盤面の設定'''
@@ -277,6 +279,25 @@ class Board():
                 x_check -= 1
                 y_check += 1
 
+    def is_game_over(self) -> bool:
+        '''ゲームの終了判定'''
+        #手数が上限に達したらゲームを終了する
+        if self.turn >= MAX_TURNS:
+            return True
+
+        #まだ打てる手があればゲームを続行する(自分の手番)
+        if self.movable_pos[:, :].any():
+            return False
+
+        #まだ打てる手があればゲームを続行する(相手の手番)
+        for x in range(1, BOARD_SIZE + 1):
+            for y in range(1, BOARD_SIZE + 1):
+                #置ける場所が1つでもあればゲーム続行
+                if self.movable_check(x, y, self.current_color) != 0:
+                    return False
+
+        return True
+
     def display(self):
         '''盤面の表示'''
         #横軸
@@ -313,15 +334,51 @@ instance = Board()
 while True:
     instance.display()
 
-    get = input('手を入力してください')
+    if instance.current_color == BLACK:
+        print('黒のターンです', end='')
+    elif instance.current_color == WHITE:
+        print('白のターンです', end='')
+
+    get = input()
+    print()
 
     if instance.check_correct(get):
         x = INPUT_ALPHABET.index(get[0]) + 1
         y = INPUT_NUMBER.index(get[1]) + 1
     else:
         print('正しい形式(ex. f5)で入力してください')
+        continue
 
     if not instance.set_stone(x, y):
         print("そこには置けない")
+        continue
 
-    instance.display()
+    if instance.is_game_over():
+        instance.display()
+        print('ゲーム終了')
+        break
+
+    #指す手がなかったらパス
+    if not instance.movable_pos[:, :].any():
+        instance.current_color = -instance.current_color
+        instance.init_movables()
+        print('パスした')
+        print()
+        continue
+
+#ゲーム終了時の判定、表示
+print()
+
+count_black = np.count_nonzero(instance.board[:, :] == BLACK)
+count_white = np.count_nonzero(instance.board[:, :] == WHITE)
+
+print('黒：', count_black)
+print('白：', count_white)
+
+diff = count_black - count_white
+if diff > 0:
+    print('黒の勝ち')
+elif diff < 0:
+    print('白の勝ち')
+else:
+    print('引き分け')
