@@ -310,17 +310,18 @@ class Board():
 #メイン処理
 instance = Board()
 
-instance.display()
+while True:
+    instance.display()
 
-get = input('手を入力してください')
+    get = input('手を入力してください')
 
-if instance.check_correct(get):
-    x = INPUT_ALPHABET.index(get[0]) + 1
-    y = INPUT_NUMBER.index(get[1]) + 1
-else:
-    print('正しい形式(ex. f5)で入力してください')
+    if instance.check_correct(get):
+        x = INPUT_ALPHABET.index(get[0]) + 1
+        y = INPUT_NUMBER.index(get[1]) + 1
+    else:
+        print('正しい形式(ex. f5)で入力してください')
 
-if not instance.set_stone(x, y):
-    print("そこには置けない")
+    if not instance.set_stone(x, y):
+        print("そこには置けない")
 
-instance.display()
+    instance.display()
