@@ -1,4 +1,5 @@
 '''リバーシテスト'''
+import sys
 import random
 import numpy as np
 
@@ -27,6 +28,12 @@ INPUT_NUMBER = ['1', '2', '3', '4', '5', '6', '7', '8']
 #手数の上限
 MAX_TURNS = 60
 
+#どっちの色でやるか
+if len(sys.argv) == 2:
+    HUMAN_COLOR = sys.argv[1]
+else:
+    HUMAN_COLOR = 'B'
+
 class Board():
     '''盤面の設定'''
     def __init__(self):
@@ -54,19 +61,13 @@ class Board():
 
         self.init_movables()
 
-    def init_movables(self):
-        ''' 判定用Listの初期化'''
-        self.movable_pos[:, :] = False
-
-        for x in range(1, BOARD_SIZE + 1):
-            for y in range(1, BOARD_SIZE + 1):
-                #各マスに石が置けるかの判定を行い、反映する
-                move_dir = self.movable_check(x, y, self.current_color)
-                self.movable_dir[x, y] = move_dir
-
-                #各マスの値が0でない(石が置ける)なら、Trueにする
-                if move_dir != 0:
-                    self.movable_pos[x, y] = True
+        if HUMAN_COLOR == 'B':
+            self.human_color = BLACK
+        elif HUMAN_COLOR == 'W':
+            self.human_color = WHITE
+        else:
+            print('引数にBまたはWを指定してください')
+            sys.exit()
 
     def movable_check(self, x_pos, y_pos, color) -> int:
         '''石を置ける位置の探索'''
@@ -176,25 +177,6 @@ class Board():
         #移動可能な方向を格納した値を返す
         return move_dir
 
-    def set_stone(self, x_pos, y_pos) -> bool:
-        '''石を配置する'''
-        if x_pos < 1 or BOARD_SIZE < x_pos:
-            return False
-        if y_pos < 1 or BOARD_SIZE < y_pos:
-            return False
-        if self.movable_pos[x_pos, y_pos] == 0:
-            return False
-
-        #盤面に反映
-        self.flip_stone(x_pos, y_pos)
-        #手番を進め、交代する
-        self.turn += 1
-        self.current_color = -self.current_color
-        #探索Listをリセットし、再探索する
-        self.init_movables()
-
-        return True
-
     def flip_stone(self, x_pos, y_pos):
         '''石を置き、盤面に反映する'''
         #指定したマスをそのターンの色にする
@@ -280,6 +262,39 @@ class Board():
                 x_check -= 1
                 y_check += 1
 
+    def set_stone(self, x_pos, y_pos) -> bool:
+        '''石を配置する'''
+        if x_pos < 1 or BOARD_SIZE < x_pos:
+            return False
+        if y_pos < 1 or BOARD_SIZE < y_pos:
+            return False
+        if self.movable_pos[x_pos, y_pos] == 0:
+            return False
+
+        #盤面に反映
+        self.flip_stone(x_pos, y_pos)
+        #手番を進め、交代する
+        self.turn += 1
+        self.current_color = -self.current_color
+        #探索Listをリセットし、再探索する
+        self.init_movables()
+
+        return True
+
+    def init_movables(self):
+        ''' 判定用Listの更新'''
+        self.movable_pos[:, :] = False
+
+        for x in range(1, BOARD_SIZE + 1):
+            for y in range(1, BOARD_SIZE + 1):
+                #各マスに石が置けるかの判定を行い、反映する
+                move_dir = self.movable_check(x, y, self.current_color)
+                self.movable_dir[x, y] = move_dir
+
+                #各マスの値が0でない(石が置ける)なら、Trueにする
+                if move_dir != 0:
+                    self.movable_pos[x, y] = True
+
     def is_game_over(self) -> bool:
         '''ゲームの終了判定'''
         #手数が上限に達したらゲームを終了する
@@ -294,16 +309,20 @@ class Board():
         for x in range(1, BOARD_SIZE + 1):
             for y in range(1, BOARD_SIZE + 1):
                 #置ける場所が1つでもあればゲーム続行
-                if self.movable_check(x, y, self.current_color) != 0:
+                if self.movable_check(x, y, -self.current_color) != 0:
                     return False
 
         return True
 
     def skip(self) -> bool:
         '''パスの判定'''
-        if any(self.movable_pos[:, :]):
+        #全ての要素が0(置けるマスがない)の場合のみパス
+        #any(list) ... list内要素が1つでもTrueならTrueを返す
+        #if any(self.movable_pos[:, :]):
+        if self.movable_pos.any():
             return False
 
+        #ゲームが終了していたらパスできない
         if self.is_game_over():
             return False
 
@@ -334,9 +353,11 @@ class Board():
 
     def check_correct(self, select_pos) -> bool:
         '''入力された手が正しい手かどうか判定する'''
+        #入力が空でないか判定
         if not select_pos:
             return False
 
+        #入力された手が正しい手かどうか判定
         if select_pos[0] in INPUT_ALPHABET and select_pos[1] in INPUT_NUMBER:
             return True
 
@@ -362,12 +383,20 @@ while True:
     instance.display()
 
     if instance.current_color == BLACK:
-        print('黒のターンです', end='')
+        print('黒のターンです：', end='')
     elif instance.current_color == WHITE:
-        print('白のターンです', end='')
+        print('白のターンです：', end='')
 
-    get = input()
+    if instance.current_color == instance.human_color:
+        get = input()
+    else:
+        get = instance.random_input()
+        print(get)
     print()
+
+    if get == 'e':
+        print('対戦を終了します')
+        break
 
     if instance.check_correct(get):
         x = INPUT_ALPHABET.index(get[0]) + 1
