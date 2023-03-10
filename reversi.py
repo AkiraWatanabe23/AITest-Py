@@ -1,6 +1,6 @@
 '''リバーシテスト'''
-import numpy as np
 import random
+import numpy as np
 
 #マスの状態
 EMPTY = 0
