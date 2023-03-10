@@ -1,5 +1,6 @@
 '''リバーシテスト'''
 import numpy as np
+import random
 
 #マスの状態
 EMPTY = 0
@@ -298,6 +299,19 @@ class Board():
 
         return True
 
+    def skip(self) -> bool:
+        '''パスの判定'''
+        if any(self.movable_pos[:, :]):
+            return False
+
+        if self.is_game_over():
+            return False
+
+        self.current_color = -self.current_color
+        self.init_movables()
+
+        return True
+
     def display(self):
         '''盤面の表示'''
         #横軸
@@ -327,6 +341,19 @@ class Board():
             return True
 
         return False
+
+    def random_input(self):
+        '''CPU(ランダムに手を打つ)'''
+        if instance.skip():
+            return False
+
+        grids = np.where(self.movable_pos == 1)
+
+        random_chosen_index = random.randrange(len(grids[0]))
+        x_grid = grids[0][random_chosen_index]
+        y_grid = grids[1][random_chosen_index]
+
+        return INPUT_ALPHABET[x_grid - 1] + INPUT_NUMBER[y_grid - 1]
 
 #メイン処理
 instance = Board()
