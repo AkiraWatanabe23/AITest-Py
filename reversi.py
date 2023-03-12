@@ -343,11 +343,11 @@ class Board():
                 grid = self.board[x, y]
 
                 if grid == EMPTY:
-                    print('🔳', end='')
+                    print('  ', end='')
                 elif grid == WHITE:
-                    print('白', end='')
+                    print('🔲', end='')
                 elif grid == BLACK:
-                    print('黒', end='')
+                    print('🔳', end='')
 
             print()
 
