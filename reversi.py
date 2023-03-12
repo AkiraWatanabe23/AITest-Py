@@ -297,15 +297,15 @@ class Board():
         ''' 判定用Listの更新'''
         self.movable_pos[:, :] = False
 
-        for x in range(1, BOARD_SIZE + 1):
-            for y in range(1, BOARD_SIZE + 1):
+        for x_pos in range(1, BOARD_SIZE + 1):
+            for y_pos in range(1, BOARD_SIZE + 1):
                 #各マスに石が置けるかの判定を行い、反映する
-                move_dir = self.movable_check(x, y, self.current_color)
-                self.movable_dir[x, y] = move_dir
+                move_dir = self.movable_check(x_pos, y_pos, self.current_color)
+                self.movable_dir[x_pos, y_pos] = move_dir
 
                 #各マスの値が0でない(石が置ける)なら、Trueにする
                 if move_dir != 0:
-                    self.movable_pos[x, y] = True
+                    self.movable_pos[x_pos, y_pos] = True
 
     def is_game_over(self) -> bool:
         '''ゲームの終了判定'''
@@ -318,10 +318,10 @@ class Board():
             return False
 
         #まだ打てる手があればゲームを続行する(相手の手番)
-        for x in range(1, BOARD_SIZE + 1):
-            for y in range(1, BOARD_SIZE + 1):
+        for x_pos in range(1, BOARD_SIZE + 1):
+            for y_pos in range(1, BOARD_SIZE + 1):
                 #置ける場所が1つでもあればゲーム続行
-                if self.movable_check(x, y, -self.current_color) != 0:
+                if self.movable_check(x_pos, y_pos, -self.current_color) != 0:
                     return False
 
         return True
@@ -348,11 +348,11 @@ class Board():
         #横軸
         print(' a b c d e f g h')
 
-        for y in range(1, 9):
+        for y_pos in range(1, 9):
             #縦軸
-            print(y, end="")
-            for x in range(1, 9):
-                grid = self.board[x, y]
+            print(y_pos, end="")
+            for x_pos in range(1, 9):
+                grid = self.board[x_pos, y_pos]
 
                 if grid == EMPTY:
                     print('  ', end='')
@@ -376,7 +376,7 @@ class Board():
         return False
 
     def random_input(self):
-        '''CPU(ランダムに手を打つ)'''
+        '''CPU(可能な手の中からランダムに手を打つ)'''
         if instance.skip():
             return False
 
@@ -399,6 +399,7 @@ while True:
     elif instance.current_color == WHITE:
         print('白のターンです：', end='')
 
+    #入力を受け付ける
     if instance.current_color == instance.human_color:
         get = input()
     else:
@@ -406,6 +407,7 @@ while True:
         print(get)
     print()
 
+    #対戦を中断し、その時点での結果を返す
     if get == 'e':
         print('対戦を終了します')
         break
@@ -434,7 +436,7 @@ while True:
         print()
         continue
 
-#ゲーム終了時の判定、表示
+#ゲーム終了時の判定、描画
 print()
 
 count_black = np.count_nonzero(instance.board[:, :] == BLACK)
