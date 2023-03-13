@@ -1,4 +1,5 @@
 '''リバーシテスト'''
+import cpu_thinking
 import sys
 import random
 import numpy as np
@@ -296,7 +297,8 @@ class Board():
 
     def init_movables(self):
         ''' 判定用Listの更新'''
-        self.movable_pos[:, :] = False
+        #判定用のListをリセット
+        self.movable_pos[:, :] = 0
 
         for x_pos in range(1, BOARD_SIZE + 1):
             for y_pos in range(1, BOARD_SIZE + 1):
@@ -304,9 +306,9 @@ class Board():
                 move_dir = self.movable_check(x_pos, y_pos, self.current_color)
                 self.movable_dir[x_pos, y_pos] = move_dir
 
-                #各マスの値が0でない(石が置ける)なら、Trueにする
+                #各マスの値が0でない(石が置ける)なら、1を立てる
                 if move_dir != 0:
-                    self.movable_pos[x_pos, y_pos] = True
+                    self.movable_pos[x_pos, y_pos] = 1
 
     def is_game_over(self) -> bool:
         '''ゲームの終了判定'''
