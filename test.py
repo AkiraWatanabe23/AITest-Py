@@ -1,6 +1,7 @@
 '''三目並べテスト'''
 from enum import Enum, auto
 import random
+import math
 
 class GameState(Enum):
     '''ゲームの勝敗を管理するためのクラス'''
@@ -24,8 +25,10 @@ class Board:
 
     def state(self):
         '''現在のゲームの状態（決着がついたか進行中か）を判定するメソッド'''
+        #ゲームの決着がついたら
         if self.won():
             return GameState.OVER
+        #指せる手がなくなったら
         elif len(self.possible_moves()) == 0:
             return GameState.DRAW
         else:
@@ -40,14 +43,14 @@ class Board:
                     moves.append((i, j))
         return moves
 
-    def make_move(self, move):
+    def make_move(self, move_pos):
         '''指定された場所に印をつけるメソッド'''
         # make a move
-        if self.cell[move[0]][move[1]] == Mark.EMPTY:
+        if self.cell[move_pos[0]][move_pos[1]] == Mark.EMPTY:
             if self.is_first_player:
-                self.cell[move[0]][move[1]] = Mark.X
+                self.cell[move_pos[0]][move_pos[1]] = Mark.X
             else:
-                self.cell[move[0]][move[1]] = Mark.O
+                self.cell[move_pos[0]][move_pos[1]] = Mark.O
             #ターン切り替え
             self.is_first_player = not self.is_first_player
 
@@ -75,10 +78,10 @@ class Board:
         if check_cells(0, 2, 1, -1):
             return True
 
-    def rewind(self, move):
+    def rewind(self, move_pos):
         '''指定した場所の印を空欄にする（手を巻き戻す）メソッド'''
         # rewind the board
-        self.cell[move[0]][move[1]] = Mark.EMPTY
+        self.cell[move_pos[0]][move_pos[1]] = Mark.EMPTY
         self.is_first_player = not self.is_first_player
 
     def __str__(self):
@@ -96,6 +99,24 @@ class Board:
             board_str += "\n"
         return board_str
 
+def mini_max(cur_board):
+    '''MiniMaxを再帰的に実行する関数'''
+    if cur_board.state() == GameState.DRAW:
+        return 0
+    elif cur_board.state() == GameState.OVER:
+        return -1
+
+    best = -math.inf
+    #指すことができる全ての手に対して評価関数を実行する
+    for move_c in cur_board.possible_moves():
+        cur_board.make_move(move_c)
+        get_score = -mini_max(cur_board)
+        cur_board.rewind(move_c)
+
+        if get_score > best:
+            best = get_score
+    return best
+
 board = Board()
 
 while True:
@@ -103,7 +124,24 @@ while True:
         break
 
     print('先手' if board.is_first_player else '後手')
-    next_move = random.choice(board.possible_moves())
+    best_score = -math.inf
+    best_move = None
+    # 先手の場合はmini-max法を用いて最善手を選択する
+    if board.is_first_player:
+        # 全ての可能な手について評価関数を計算し，最大の評価関数を持つ手を選択する
+        move_dict = {}
+        for move in board.possible_moves():
+            board.make_move(move)
+            score = -mini_max(board)
+            move_dict[move] = score
+            board.rewind(move)
+            if score > best_score:
+                best_score = score
+                best_move = move
+        next_move = best_move
+        print(move_dict)
+    else:
+        # 後手の場合はランダムに手を選択する
+        next_move = random.choice(board.possible_moves())
     board.make_move(next_move)
-
     print(board)
