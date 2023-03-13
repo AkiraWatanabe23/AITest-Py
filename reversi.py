@@ -1,5 +1,4 @@
 '''リバーシテスト'''
-import cpu_thinking
 import sys
 import random
 import numpy as np
