@@ -13,12 +13,13 @@ import numpy as np
 #6, 石を置き、盤面を更新する
 #7, ターンを進める
 #8, 2～7を繰り返す
-#9, 全て埋まったら勝利判定し、終了
+#9, マスが全て埋まったら勝利判定し、終了
 
 #マスの状態
 EMPTY = 0
 WHITE = -1
 BLACK = 1
+#盤面の情報
 WALL = 2
 BOARD_SIZE = 8
 
@@ -82,7 +83,7 @@ class Board():
             sys.exit()
 
     def movable_check(self, x_pos, y_pos, color) -> int:
-        '''石を置ける位置の探索'''
+        '''石を置ける位置の探索(置けるかどうかのみ)'''
         #指定したマスがどの方向に石をひっくり返せるかを格納する
         move_dir = 0
 
@@ -190,7 +191,7 @@ class Board():
         return move_dir
 
     def flip_stone(self, x_pos, y_pos):
-        '''石を置き、盤面に反映する'''
+        '''石を置き、盤面に反映する(盤面の情報を更新するだけ...いくつひっくり返すか等は見ていない)'''
         #指定したマスをそのターンの色にする
         self.board[x_pos, y_pos] = self.current_color
 
@@ -352,6 +353,7 @@ class Board():
             #縦軸
             print(y_pos, end="")
             for x_pos in range(1, 9):
+                #盤面の状態に応じて描画する
                 grid = self.board[x_pos, y_pos]
 
                 if grid == EMPTY:
@@ -380,6 +382,7 @@ class Board():
         if instance.skip():
             return False
 
+        #石を置けるマスの列挙
         grids = np.where(self.movable_pos == 1)
 
         random_chosen_index = random.randrange(len(grids[0]))
@@ -400,8 +403,10 @@ while True:
         print('白のターンです：', end='')
 
     #入力を受け付ける
+    #playerのターン
     if instance.current_color == instance.human_color:
         get = input()
+    #CPUのターン
     else:
         get = instance.random_input()
         print(get)
@@ -412,6 +417,7 @@ while True:
         print('対戦を終了します')
         break
 
+    #入力が正しい形式か判定
     if instance.check_correct(get):
         x = INPUT_ALPHABET.index(get[0]) + 1
         y = INPUT_NUMBER.index(get[1]) + 1
@@ -419,13 +425,14 @@ while True:
         print('正しい形式(ex. f5)で入力してください')
         continue
 
+    #盤面を更新し、ゲームを進める
     if not instance.set_stone(x, y):
-        print("そこには置けない")
+        print("そこには置けません")
         continue
 
     if instance.is_game_over():
         instance.display()
-        print('ゲーム終了')
+        print('ゲーム終了します')
         break
 
     #指す手がなかったらパス
@@ -439,6 +446,7 @@ while True:
 #ゲーム終了時の判定、描画
 print()
 
+#それぞれの石の数を数え、多い方の勝ち
 count_black = np.count_nonzero(instance.board[:, :] == BLACK)
 count_white = np.count_nonzero(instance.board[:, :] == WHITE)
 

@@ -3,7 +3,6 @@ from enum import Enum, auto
 import random
 import math
 
-
 class GameState(Enum):
     '''ゲームの勝敗を管理するためのクラス'''
     DRAW = auto()
