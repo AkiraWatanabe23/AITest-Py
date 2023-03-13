@@ -20,7 +20,7 @@ class Board:
     '''盤の状態全体を管理するクラス'''
     def __init__(self):
         '''盤を初期化するメソッド'''
-        self.cell = [[Mark.EMPTY for i in range(3)] for j in range(3)]
+        self.cell = [[Mark.EMPTY for _ in range(3)] for _ in range(3)]
         self.is_first_player = True
 
     def state(self):

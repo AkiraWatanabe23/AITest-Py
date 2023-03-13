@@ -1,7 +1,8 @@
 '''αβ法による三目並べのテスト'''
+from enum import Enum, auto
 import random
 import math
-from enum import Enum, auto
+
 
 class GameState(Enum):
     '''ゲームの勝敗を管理するためのクラス'''
@@ -19,7 +20,7 @@ class Board:
     '''盤の状態全体を管理するクラス'''
     def __init__(self):
         '''盤を初期化するメソッド'''
-        self.cell = [[Mark.EMPTY for i in range(3)] for j in range(3)]
+        self.cell = [[Mark.EMPTY for _ in range(3)] for _ in range(3)]
         self.is_first_player = True
 
     def state(self):
@@ -89,7 +90,7 @@ class Board:
         return board_str
 
 def alpha_beta(board, alpha, beta):
-    '''alpha-beta法を再帰的に実装するための関数'''
+    '''αβ法を再帰的に実装するための関数'''
     if board.state() == GameState.DRAW:
         return 0
     elif board.state() == GameState.OVER:
