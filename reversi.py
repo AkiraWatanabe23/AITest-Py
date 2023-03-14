@@ -386,6 +386,8 @@ class Board():
         #石を置けるマスの列挙
         grids = np.where(self.movable_pos == 1)
 
+        #この部分で選択する手を決めるようにしたい
+
         #マスの選択
         random_chosen_index = random.randrange(len(grids[0]))
         x_grid = grids[0][random_chosen_index]
