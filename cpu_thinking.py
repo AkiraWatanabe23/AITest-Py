@@ -5,8 +5,6 @@ def decide_pos(x_pos, y_pos) -> int:
     '''石を置き、盤面に反映する'''
     instance = reversi.Board()
 
-    #指定したマスをそのターンの色にする
-    instance.board[x_pos, y_pos] = instance.current_color
     #いくつの石をひっくり返せるか
     flip_count = 0
 

@@ -2,6 +2,7 @@
 import sys
 import random
 import numpy as np
+import cpu_thinking as think
 
 #↓  オセロの実行手順(ざっくり)
 #1, 盤面の初期設定
@@ -387,11 +388,18 @@ class Board():
         #gridsには、横軸のインデックスと縦軸のインデックスが別になった2つのndarrayが格納される
         #ex.) (array([4, 6, 6], dtype=int64)
         #      array([6, 4, 6], dtype=int64)) のとき
-        #     (4, 6), (6, 4), (6, 6) における、となる(縦にみる、と予想)
+        #     (4, 6), (6, 4), (6, 6) における、となる予想
         grids = np.where(self.movable_pos == 1)
         print(grids)
 
         #この部分で選択する手を決めるようにしたい
+        # flip_count = np.zeros((BOARD_SIZE + 2, BOARD_SIZE + 2), dtype=int)
+        # for x in range(1, BOARD_SIZE + 1):
+        #     for y in range(1, BOARD_SIZE + 1):
+        #         flip_count[x, y] = think.decide_pos(x, y)
+
+        # max_value = max(flip_count)
+        # print(max_value)
 
         #マスの選択
         random_chosen_index = random.randrange(len(grids[0]))
