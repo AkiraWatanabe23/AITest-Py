@@ -384,7 +384,12 @@ class Board():
             return False
 
         #石を置けるマスの列挙
+        #gridsには、横軸のインデックスと縦軸のインデックスが別になった2つのndarrayが格納される
+        #ex.) (array([4, 6, 6], dtype=int64)
+        #      array([6, 4, 6], dtype=int64)) のとき
+        #     (4, 6), (6, 4), (6, 6) における、となる(縦にみる、と予想)
         grids = np.where(self.movable_pos == 1)
+        print(grids)
 
         #この部分で選択する手を決めるようにしたい
 
