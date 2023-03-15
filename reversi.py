@@ -2,7 +2,7 @@
 import sys
 import random
 import numpy as np
-import cpu_thinking
+from cpu_thinking import decide_pos
 
 #↓  オセロの実行手順(ざっくり)
 #1, 盤面の初期設定
@@ -396,7 +396,7 @@ class Board():
         flip_count = np.zeros((BOARD_SIZE + 2, BOARD_SIZE + 2), dtype=int)
         for x in range(1, BOARD_SIZE + 1):
             for y in range(1, BOARD_SIZE + 1):
-                flip_count[x, y] = cpu_thinking.decide_pos(self, x, y)
+                flip_count[x, y] = decide_pos(x, y)
 
         max_value = max(flip_count)
         print(max_value)

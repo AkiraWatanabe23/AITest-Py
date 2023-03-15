@@ -1,9 +1,9 @@
 '''ひっくり返す数を基にしてマスを決める'''
 import reversi
 
-def decide_pos(rev: reversi, x_pos, y_pos) -> int:
+def decide_pos(x_pos, y_pos) -> int:
     '''石を置き、盤面に反映する'''
-    instance = rev.Board()
+    instance = reversi.Board()
 
     #いくつの石をひっくり返せるか
     flip_count = 0
